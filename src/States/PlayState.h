@@ -12,6 +12,7 @@ public:
     PlayState();
     virtual void Update(sf::RenderWindow& window);
     virtual void Render(sf::RenderWindow& window);
+    virtual void Init();
 
 private:
     // TODO: Replace with game over state

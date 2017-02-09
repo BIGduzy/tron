@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(int x, int y, sf::Color c, short dir) {
+Player::Player(float x, float y, sf::Color c, short dir) {
     _pos = {x, y};
     _color = c;
     _dir = dir;
@@ -30,9 +30,14 @@ bool Player::CollidesWith(Player& player) {
     return collision;
 }
 
+bool Player::isOutOfBounds(int width, int height) const {
+    return (_pos.x < 0 || _pos.x > width || _pos.y < 0 || _pos.y > height);
+}
+
 void Player::Update() {
     // TODO: This should be done better
-    _tail.push_back(_pos);
+    if (int(_pos.x) % _size == 0 && int(_pos.y) % _size == 0)
+        _tail.push_back(_pos);
 
     // Prevent suicide
     if (_dir == 0) _pos.y -= _speed; // Up
@@ -50,7 +55,7 @@ void Player::Render(sf::RenderWindow& window) {
 
     // Draw Tail
     for (int i = 0; i < _tail.size(); i++) {
-        sf::CircleShape shape(_size);
+        sf::RectangleShape shape({_size * 2.f, _size * 2.f});
         shape.setFillColor(_color);
         shape.setPosition(_tail[i]);
         window.draw(shape);

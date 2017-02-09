@@ -7,16 +7,17 @@
 
 class Player {
 public:
-    sf::Color _color;
-    Player(int x, int y, sf::Color c, short dir);
+    Player(float x, float y, sf::Color c, short dir);
     void setDir(const short d);
     bool CollidesWith(Player& player);
+    bool isOutOfBounds(int width, int height) const;
     void Update();
     void Render(sf::RenderWindow& window);
 private:
     const short _size = 3;
     short _dir;
-    int _speed = 4;
+    int _speed = 6;
+    sf::Color _color;
     std::vector<sf::Vector2f> _tail;
     sf::Vector2f _pos;
 };

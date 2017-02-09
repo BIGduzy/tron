@@ -2,7 +2,19 @@
 #include "../Game.h"
 
 PlayState::PlayState() {
+    if(!_bgTexture.loadFromFile("src/Resources/background.jpg")) {
+        std::cout << "Error loading background image" << std::endl;
+    }
+    _background.setTexture(_bgTexture);
+
+    Init();
+}
+
+void PlayState::Init() {
+    gameOver = false;
+
     // Create players
+    _players.clear(); // use clear so we can use the init function to reset level
     for (short i = 0; i < _numPlayers; i++) {
         _players.push_back(
                 Player(
@@ -13,15 +25,16 @@ PlayState::PlayState() {
                 )
         );
     }
-
-    if(!_bgTexture.loadFromFile("src/Resources/background.jpg")) {
-        std::cout << "Error loading background image" << std::endl;
-    }
-    _background.setTexture(_bgTexture);
 }
 
 void PlayState::Update(sf::RenderWindow& window) {
-    if (gameOver) return;
+    if (gameOver) {
+        // Reset level on R key
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+            Init();
+        }
+        return;
+    }
 
     // TODO: Do this for every user
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) _players[0].setDir(0);
@@ -37,8 +50,12 @@ void PlayState::Update(sf::RenderWindow& window) {
     for (short i = 0; i < _numPlayers; i++) {
         _players[i].Update();
 
+        // Out of bounds check
+        if (_players[i].isOutOfBounds(Game::WIDTH, Game::HEIGHT)) {
+            gameOver = true;
+        }
+
         for (short j = 0; j < _numPlayers; j++) {
-//             TODO: Also check collision on self
             if (_players[i].CollidesWith(_players[j])) {
                 gameOver = true;
             }
