@@ -17,7 +17,7 @@ void PlayState::Init() {
     _players.clear(); // use clear so we can use the init function to reset level
     for (short i = 0; i < _numPlayers; i++) {
         _players.push_back(
-                Player(
+                new Player(
                         i * (Game::WIDTH - PLAYER_SIZE * 2), // x position
                         Game::HEIGHT / 2, // y position
                         (i % 2 == 0) ? sf::Color::Blue : sf::Color::Green, // color
@@ -25,6 +25,15 @@ void PlayState::Init() {
                 )
         );
     }
+    // Add AI
+    _players.push_back(
+            new SimpleAI(
+                    (Game::WIDTH - PLAYER_SIZE * 2), // x position
+                    Game::HEIGHT / 2, // y position
+                    sf::Color::Green, // color
+                    3 // Direction
+            )
+    );
 }
 
 void PlayState::Update(sf::RenderWindow& window) {
@@ -37,26 +46,26 @@ void PlayState::Update(sf::RenderWindow& window) {
     }
 
     // TODO: Do this for every user
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) _players[0].setDir(0);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) _players[0].setDir(1);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) _players[0].setDir(2);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) _players[0].setDir(3);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) _players[0]->setDir(0);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) _players[0]->setDir(1);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) _players[0]->setDir(2);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) _players[0]->setDir(3);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) _players[1].setDir(0);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) _players[1].setDir(1);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) _players[1].setDir(2);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) _players[1].setDir(3);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) _players[1]->setDir(0);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) _players[1]->setDir(1);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) _players[1]->setDir(2);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) _players[1]->setDir(3);
 
-    for (short i = 0; i < _numPlayers; i++) {
-        _players[i].Update();
+    for (short i = 0; i < _players.size(); i++) {
+        _players[i]->Update(_players);
 
         // Out of bounds check
-        if (_players[i].isOutOfBounds(Game::WIDTH, Game::HEIGHT)) {
+        if (_players[i]->isOutOfBounds(Game::WIDTH, Game::HEIGHT)) {
             gameOver = true;
         }
 
-        for (short j = 0; j < _numPlayers; j++) {
-            if (_players[i].CollidesWith(_players[j])) {
+        for (short j = 0; j < _players.size(); j++) {
+            if (_players[i]->CollidesWith(*_players[j])) {
                 gameOver = true;
             }
         }
@@ -68,8 +77,8 @@ void PlayState::Render(sf::RenderWindow& window) {
     window.draw(_background);
 
 
-    for (short i = 0; i < _numPlayers; i++) {
-        _players[i].Render(window);
+    for (short i = 0; i < _players.size(); i++) {
+        _players[i]->Render(window);
     }
 
 }

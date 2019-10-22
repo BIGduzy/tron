@@ -1,7 +1,8 @@
 #include "vector"
 
 #include "State.h"
-#include "../Player.h"
+#include "../LightCycle/Player.h"
+#include "../LightCycle/SimpleAI.h"
 
 #ifndef TRON_PLAYSTATE_H
 #define TRON_PLAYSTATE_H
@@ -19,7 +20,7 @@ private:
     bool gameOver = false;
     const short PLAYER_SIZE = 3;
     short _numPlayers = 2;
-    std::vector<Player> _players;
+    std::vector<Player*> _players;
 
     sf::Texture _bgTexture;
     sf::Sprite _background;

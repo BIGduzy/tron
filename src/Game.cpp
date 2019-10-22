@@ -1,7 +1,7 @@
 #include "Game.h"
 
 Game::Game() : _curState() {
-    srand(time(0));
+    srand((unsigned)time(0));
 }
 
 void Game::Run() {
